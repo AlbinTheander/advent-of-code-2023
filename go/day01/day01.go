@@ -1,4 +1,4 @@
-package main
+package day01
 
 import (
 	"fmt"
@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-func day01() {
+func Day01() {
 
 	content, _ := os.ReadFile("../data/day01.txt")
 	lines := strings.Split(string(content), "\n")
