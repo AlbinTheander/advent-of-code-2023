@@ -13,7 +13,8 @@ func Day02() {
 	lines := strings.Split(string(content), "\n")
 	value1 := part1(lines)
 	value2 := part2(lines)
-	fmt.Println("===== Day 02 =====")
+
+	fmt.Println("\n===== Day 02 =====")
 	fmt.Println("The sum of the possible game ids is", value1)
 	fmt.Println("The total power of the games is", value2)
 }
