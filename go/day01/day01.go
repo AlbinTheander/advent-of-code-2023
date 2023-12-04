@@ -7,7 +7,6 @@ import (
 )
 
 func Day01() {
-
 	content, _ := os.ReadFile("../data/day01.txt")
 	lines := strings.Split(string(content), "\n")
 	value1 := part1(lines)
