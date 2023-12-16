@@ -7,12 +7,16 @@ export class Array2D<Value, OutsideValue=undefined> {
     this.width = data[0].length
   }
 
+  contains(x: number, y: number): boolean {
+    return x >= 0 && y >= 0 && x < this.width && y < this.height;
+  }
+
   set(x: number, y: number, value: Value) {
     this.data[y][x] = value
   }
 
   get(x: number, y: number): Value | OutsideValue {
-    if (x < 0 || x >= this.width || y < 0 || y >= this.height) return this.defaultValue
+    if (!this.contains(x, y)) return this.defaultValue
     return this.data[y][x]
   }
 
