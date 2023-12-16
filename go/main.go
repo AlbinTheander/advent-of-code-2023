@@ -6,6 +6,7 @@ import (
 	"albin/adventofcode/day03"
 	"albin/adventofcode/day04"
 	"albin/adventofcode/day06"
+	"albin/adventofcode/day07"
 )
 
 func main() {
@@ -14,4 +15,5 @@ func main() {
 	day03.Day03()
 	day04.Day04()
 	day06.Day06()
+	day07.Day07()
 }
