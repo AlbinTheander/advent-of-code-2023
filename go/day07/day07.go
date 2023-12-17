@@ -9,9 +9,10 @@ import (
 )
 
 type hand struct {
-	cards string
-	bid   int
-	score int
+	cards  string
+	bid    int
+	score  int
+	score2 int
 }
 
 func Day07() {
@@ -19,13 +20,24 @@ func Day07() {
 	// data, _ := os.ReadFile("./test.txt")
 	hands := parseData(data)
 	value1 := part1(hands)
+	value2 := part2(hands)
 
 	fmt.Println("\n===== Day 07 =====")
 	fmt.Println("The total hand scoring is", value1)
+	fmt.Println("The total hand scoring with jokers is", value2)
 }
 
 func part1(hands []hand) int {
 	sort.Slice(hands, func(i, j int) bool { return hands[i].score < hands[j].score })
+	total := 0
+	for i, h := range hands {
+		total += h.bid * (i + 1)
+	}
+	return total
+}
+
+func part2(hands []hand) int {
+	sort.Slice(hands, func(i, j int) bool { return hands[i].score2 < hands[j].score2 })
 	total := 0
 	for i, h := range hands {
 		total += h.bid * (i + 1)
@@ -39,14 +51,34 @@ func parseData(data []byte) []hand {
 	for _, line := range lines {
 		parts := strings.Split(line, " ")
 		cards := parts[0]
+		betterCards := improveHand(cards)
 		bid, _ := strconv.Atoi(parts[1])
-		score := handScore(cards)*1e10 + baseScore(cards)
-		hands = append(hands, hand{cards, bid, score})
+		score := handScore(cards)*1e10 + baseScore(cards, 11)
+		score2 := handScore(betterCards)*1e10 + baseScore(cards, 1)
+		hands = append(hands, hand{cards, bid, score, score2})
 	}
 	return hands
 }
 
-func baseScore(line string) int {
+func improveHand(cards string) string {
+	freqs := make(map[rune]int)
+	for _, ch := range cards {
+		if ch != 'J' {
+			freqs[ch]++
+		}
+	}
+	maxCount := 0
+	maxChar := rune(cards[0])
+	for ch, count := range freqs {
+		if count > maxCount {
+			maxCount = count
+			maxChar = ch
+		}
+	}
+	return strings.ReplaceAll(cards, "J", string(maxChar))
+}
+
+func baseScore(line string, jScore int) int {
 	score := 0
 	for _, c := range line {
 		score *= 100
@@ -58,7 +90,7 @@ func baseScore(line string) int {
 		case 'Q':
 			score += 12
 		case 'J':
-			score += 11
+			score += jScore
 		case 'T':
 			score += 10
 		default:
