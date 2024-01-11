@@ -10,8 +10,11 @@ type Instruction = {
 
 export function day18(data: string) {
     const instructions = parseData(data);
-    part1(instructions);
-    part2(instructions);
+    const result1 = part1(instructions);
+    const result2 = part2(instructions);
+
+    console.log('The original lagoon size was', result1);
+    console.log('The correct lagoon size is', result2)
 }
 
 function part1(instructions: Instruction[]) {
@@ -26,9 +29,8 @@ function part1(instructions: Instruction[]) {
             points.add(x, y);
         }
     }
-    console.log(points.toString())
     floodfill(points, 1, 1);
-    console.log(points.size);
+    return points.size;
 }
 
 function part2(instructions: Instruction[]) {
@@ -72,12 +74,11 @@ function part2(instructions: Instruction[]) {
             area -= (x - x1 - 1) * y;
         }
 
-        // console.log(dir, len, area);
         x = x1;
         y = y1;
         prevDir = dir;
     }
-    console.log(area);
+    return area;
 }
 
 function floodfill(map: Infinite2DSet, startX: number, startY: number) {
