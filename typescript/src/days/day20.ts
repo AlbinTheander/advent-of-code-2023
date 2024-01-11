@@ -7,8 +7,8 @@ type Circuit = {
 }
 export function day20(data: string) {
     const circuits = parseData(data);
-    part1(circuits);
-    // part2(circuits);
+    // part1(circuits);
+    part2(circuits);
 }
 
 function part1(circuits: Circuit[]) {
@@ -25,35 +25,17 @@ function part1(circuits: Circuit[]) {
 type State = [string, string|boolean][];
 
 function part2(circuits: Circuit[]) {
-    const trackState = 'mq'
-    const every = 1;
-    const founds = [];
-    const startState = getState(circuits);
-    const lhStart = startState.find(s => s[0] == trackState)[1];
-    let lastLh = lhStart;
-    console.log('start', trackState, lhStart)
-    let prevState: State = getState(circuits);
-    for (let i = 1; i <= 3760*4096; i++) {
-        if (i % 1000000 === 0) console.log(i, 'NOPE', founds);
-        const s = simulate(circuits);
-        const state = getState(circuits);
-        const lh = state.find(s => s[0] == trackState)[1];
-        // if (lh === '11111111') {
-        // if (lh !== lastLh) {
-        //     console.log(trackState, 'changed', i, ':', lastLh, '->', lh);
-        //     lastLh = lh;
-        // }
-        // if (s.includes('0')) {
-        //     founds.push([i, s])
-        //     console.log(i, s);
-        // }
+    const xf = circuits.find(c => c.name === 'xf');
+    console.log(xf);
+    let next = 1;
+    for (let i = 1; i < 3800; i++) {
+        const [low, high] = simulate(circuits);
+        if (i === next) {
+            console.log(i, xf.inputs.map(inp => inp[1]).join(''));
+            next +=1;
+        }
     }
-
-    console.log('\nEnd diff');
-    const endState = getState(circuits);
-    printDiffState(startState, endState);
-    console.log('         ENNNNND')
-    console.log(endState);
+    console.log(xf);
 }
 
 function printDiffState(state1: State, state2: State) {
