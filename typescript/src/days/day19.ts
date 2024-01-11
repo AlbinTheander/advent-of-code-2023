@@ -25,8 +25,11 @@ type Part = {
 
 export function day19(data: string) {
     const [parts, workflows] = parseData(data);
-    part1(parts, workflows);
-    part2(workflows);
+    const result1 = part1(parts, workflows);
+    const result2 = part2(workflows);
+
+    console.log('The sum of the accepted parts is', result1);
+    console.log('The number of accepted workflows are', result2);
 }
 
 function part1(parts: Part[], workflows: Workflow[]) {
@@ -39,7 +42,7 @@ function part1(parts: Part[], workflows: Workflow[]) {
         }
         if (wName === "A") sum += part.total;
     }
-    console.log(sum);
+    return sum;
 }
 
 function applyWF(workflow: Workflow, part: Part): string {
@@ -59,7 +62,6 @@ function applyWF(workflow: Workflow, part: Part): string {
 }
 
 type Range = [number, number];
-type PartRange = { x: Range; m: Range; a: Range; s: Range };
 
 function part2(workflows: Workflow[]) {
     const toSearch = [
@@ -70,10 +72,8 @@ function part2(workflows: Workflow[]) {
     ];
     let total = 0;
     while (toSearch.length > 0) {
-        console.log('Playing with', toSearch.at(-1))
         let { wName, range } = toSearch.pop();
         if (wName === 'A') {
-            console.log('Accepting', range);
             total +=
                 (range.x[1] - range.x[0] + 1) *
                 (range.m[1] - range.m[0] + 1) *
@@ -82,7 +82,6 @@ function part2(workflows: Workflow[]) {
             continue;
         }
         if (wName === 'R') {
-            console.log('Rejecting', range);
             continue;
         }
         const workflow = workflows.find((w) => w.name === wName);
@@ -92,14 +91,12 @@ function part2(workflows: Workflow[]) {
                 const max = Math.min(range[rule.prop][1], rule.num - 1);
                 if (min <= max) {
                     const newRange = { ...range, [rule.prop]: [min, max] };
-                    console.log("Will check", rule.target, "with", newRange);
                     toSearch.push({wName: rule.target, range: newRange });
                 }
                 const restMin = Math.max(range[rule.prop][0], rule.num);
                 const restMax = range[rule.prop][1];
                 if (restMin <= restMax) {
                     range = { ...range, [rule.prop]: [restMin, restMax] };
-                    console.log("continue with", range);
                 }
             }
             if (rule.op === ">") {
@@ -107,23 +104,20 @@ function part2(workflows: Workflow[]) {
                 const max = range[rule.prop][1];
                 if (min <= max) {
                     const newRange = { ...range, [rule.prop]: [min, max] };
-                    console.log("Will check", rule.target, "with", newRange);
                     toSearch.push({wName: rule.target, range: newRange });
                 }
                 const restMin = range[rule.prop][0];
                 const restMax = Math.min(range[rule.prop][1], rule.num);
                 if (restMin <= restMax) {
                     range = { ...range, [rule.prop]: [restMin, restMax] };
-                    console.log("continue with", range);
                 }
             }
             if (rule.op === "=") {
-                console.log("Will next check", rule.target, "with", range);
                 toSearch.push({ wName: rule.target, range: range })
             }
         }
     }
-    console.log(total);
+    return total;
 }
 
 function parseData(data: string): [Part[], Workflow[]] {
