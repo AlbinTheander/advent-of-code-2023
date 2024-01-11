@@ -1,0 +1,14 @@
+broadcaster -> sj, pf, kh, cn
+&tz -> cn, fk, ls
+%cn -> tz, vm
+%vm -> zl, tz
+%zl -> tz, cm
+%cm -> tz, ls
+%ls -> fj
+%fj -> zt, tz
+%zt -> tz, fq
+%fq -> tz, bn
+%bn -> hx, tz
+%hx -> jx, tz
+%jx -> tz, np
+%np -> tz
