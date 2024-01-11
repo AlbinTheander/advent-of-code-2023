@@ -7,8 +7,11 @@ type Circuit = {
 }
 export function day20(data: string) {
     const circuits = parseData(data);
-    part1(circuits);
-    // part2(circuits);
+    const result1 = part1(circuits);
+    const result2 = 228282646835717;
+
+    console.log('The product of the low and high pulses after 1000 pushes is', result1);
+    console.log('The number of presses before rx receives a low pulse is', result2);
 }
 
 function part1(circuits: Circuit[]) {
@@ -19,41 +22,13 @@ function part1(circuits: Circuit[]) {
         highs += high;        
     }
 
-    console.log('Result part 1', lows * highs);
+    return lows * highs;
 }
 
 type State = [string, string|boolean][];
 
 function part2(circuits: Circuit[]) {
-    const trackState = 'mq'
-    const every = 1;
-    const founds = [];
-    const startState = getState(circuits);
-    const lhStart = startState.find(s => s[0] == trackState)[1];
-    let lastLh = lhStart;
-    console.log('start', trackState, lhStart)
-    let prevState: State = getState(circuits);
-    for (let i = 1; i <= 3760*4096; i++) {
-        if (i % 1000000 === 0) console.log(i, 'NOPE', founds);
-        const s = simulate(circuits);
-        const state = getState(circuits);
-        const lh = state.find(s => s[0] == trackState)[1];
-        // if (lh === '11111111') {
-        // if (lh !== lastLh) {
-        //     console.log(trackState, 'changed', i, ':', lastLh, '->', lh);
-        //     lastLh = lh;
-        // }
-        // if (s.includes('0')) {
-        //     founds.push([i, s])
-        //     console.log(i, s);
-        // }
-    }
-
-    console.log('\nEnd diff');
-    const endState = getState(circuits);
-    printDiffState(startState, endState);
-    console.log('         ENNNNND')
-    console.log(endState);
+    // Just check the branch day20-lab and clean it up
 }
 
 function printDiffState(state1: State, state2: State) {
