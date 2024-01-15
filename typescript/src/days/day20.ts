@@ -1,69 +1,55 @@
+import { lcm } from "../utils/math";
+
 type Circuit = {
     name: string;
     type: string;
     targets: string[];
     on: boolean;
     inputs: [string, number][];
+    onReceive?: (from: string, signal: number) => boolean;
 };
+
 export function day20(data: string) {
-    const circuits = parseData(data);
-    // part1(circuits);
-    part2(circuits);
+    let circuits = parseData(data);
+    const result1 = part1(circuits);
+    
+    // reset circuits
+    circuits = parseData(data);
+    const result2 = part2(circuits);
+
+    console.log('The product of high and low signals after 1000 pushes is', result1)
+    console.log('rx will get a high signal after', result2, 'presses')
 }
 
 function part1(circuits: Circuit[]) {
     let lows = 0,
         highs = 0;
     for (let i = 0; i < 1000; i++) {
-        console.log('\nRound', i)
         const [low, high] = simulate(circuits);
         lows += low;
         highs += high;
     }
 
-    console.log("Result part 1", lows * highs);
+    return highs * lows;
 }
-
-type State = [string, string | boolean][];
 
 function part2(circuits: Circuit[]) {
-    const checked = new Set<string>();
-    const mq = circuits.find((c) => c.name === "mq");
-    console.log(mq);
-    let next = 0;
-    for (let i = 1; i < 100000; i++) {
-        const [low, high] = simulate(circuits);
-        const result = mq.inputs.map((inp) => inp[1]).join("");
-        const ones = mq.inputs.filter(inp => inp[1] === 1).length;
-        if (ones === 1 && !checked.has(result)) {
-            console.log(i, result);
-            checked.add(result);
-            next += i;
-        }
+    // We checked the data, and there is only one incoming circuit
+    const toRx = circuits.find((c) => c.targets.includes("rx"));
+    const foundParts: Record<string, number> = {}
+    let buttonPresses = 0;
+    toRx.onReceive = (from: string, signal: number) => {
+        if (signal === 1 && !(from in foundParts)) {
+            foundParts[from] = buttonPresses;
+        } 
+        return true;
     }
-    console.log(mq);
-    console.log(next);
-}
-
-function printDiffState(state1: State, state2: State) {
-    console.log("State diff");
-    for (let i = 0; i < state1.length; i++) {
-        if (state1[i][1] !== state2[i][1])
-            console.log(state1[i][0], state1[i][1], "->", state2[i][1]);
+    while(Object.keys(foundParts).length < toRx.inputs.length) {
+        buttonPresses++
+        simulate(circuits);
     }
-}
-
-function getState(circuits: Circuit[]): State {
-    const states = [];
-    for (const circuit of circuits) {
-        if (circuit.type === "%") states.push([circuit.name, circuit.on]);
-        if (circuit.type === "&")
-            states.push([
-                circuit.name,
-                circuit.inputs.map((inp) => inp[1]).join(""),
-            ]);
-    }
-    return states;
+    const loopLengths = Object.values(foundParts);
+    return lcm(...loopLengths);
 }
 
 function simulate(circuits: Circuit[]) {
@@ -78,10 +64,12 @@ function simulate(circuits: Circuit[]) {
             const circuit = circuits.find((c) => c.name === source);
 
             for (const targetId of circuit.targets) {
-                if (signal === 0) sent[0]++; else sent[1]++;
+                if (signal === 0) sent[0]++;
+                else sent[1]++;
                 // console.log('Sending', source, '->', signal, '->', targetId)
                 const target = circuits.find((c) => c.name === targetId);
                 if (!target) continue;
+                if (target.onReceive) target.onReceive(source, signal);
                 switch (target.type) {
                     case "%":
                         if (signal === 0) {
@@ -95,7 +83,11 @@ function simulate(circuits: Circuit[]) {
                             (inp) => inp[0] === source
                         );
                         target.inputs[index][1] = signal;
-                        const newSignal = target.inputs.every(inp => inp[1] === 1) ? 0 : 1;
+                        const newSignal = target.inputs.every(
+                            (inp) => inp[1] === 1
+                        )
+                            ? 0
+                            : 1;
                         toSend.push([target.name, newSignal]);
                         break;
                     default:
