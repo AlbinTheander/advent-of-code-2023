@@ -1,27 +1,32 @@
-import { Array2D, toChar2D } from "../utils/Array2D";
-import { DefaultMap } from "../utils/DefaultMap";
+import { Array2D, toChar2D } from "../../utils/Array2D";
+import { DefaultMap } from "../../utils/DefaultMap";
 
 type Pos = { x: number; y: number };
 
-export function day32(data: string) {
-    const chart = toChar2D(data, "#");
+export function part2(chart: Array2D<string, string>) {
+    // The idea is to find the instersections, build a graph of how they connect
+    // to each other (with the distance between them) and then find the longest
+    // path that way instead.
+    // It's slow but it's much faster than solving the problem brute-force.
     const intersections = getIntersections(chart);
     intersections.unshift({ x: 1, y: 0 });
     intersections.push({ x: chart.width - 2, y: chart.height - 1 });
     const graph = buildIntersectionGraph(chart, intersections);
-    console.log(graph);
-    findLongestPath(graph);
+    
+    const end = `${chart.width - 2},${chart.height - 1}`;
+    return findLongestPath(graph, end);
 }
 
 function findLongestPath(
-    graph: Map<string, { id: string; distance: number }[]>
+    graph: Map<string, { id: string; distance: number }[]>,
+    endId: string
 ) {
     const best = new DefaultMap<string, number>((k) => k, 0);
     const toCheck = [{ id: "1,0", distance: 0, visited: new Set<string>() }];
     let n = 0;
     while (toCheck.length > 0) {
         const { id, distance, visited } = toCheck.pop()!;
-        if (++n % 1000000 === 0) console.log(n, toCheck.length, id, distance);
+        // if (++n % 1000000 === 0) console.log(n, toCheck.length, id, distance);
         if (visited.has(id)) continue;
         const currentBest = best.get(id);
         if (distance > currentBest) best.set(id, distance);
@@ -34,7 +39,7 @@ function findLongestPath(
             });
         }
     }
-    console.log(best);
+    return best.get(endId);
 }
 
 function getIntersections(chart: Array2D<string, string>) {

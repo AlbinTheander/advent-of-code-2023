@@ -5,7 +5,7 @@ main()
 async function main() {
     const requestedDay = process.argv[2];
     let dayFiles = readdirSync('./src/days', 'utf-8')
-        .filter(file => file.startsWith('day'))
+        .filter(file => file.startsWith('day') && file.endsWith('.ts'))
         .sort();
     
     if (requestedDay) {
