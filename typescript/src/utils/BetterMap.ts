@@ -10,12 +10,18 @@ export class BetterMap<Key, Value> {
     return this._values.values();
   }
   
-  constructor(private keyToString: (k: Key) => string) {}
+  constructor(protected keyToString: (k: Key) => string) {}
 
   public set(key: Key, value: Value) {
     const s = this.keyToString(key)
     this._values.set(s, value)
     this._keys.set(s, key)
+  }
+
+  public delete(key: Key) {
+    const s = this.keyToString(key)
+    this._values.delete(s)
+    this._keys.delete(s)
   }
 
   public get(key: Key): Value | undefined {
