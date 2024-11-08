@@ -20,8 +20,8 @@ export class Array2D<Value, OutsideValue=undefined> {
     return this.data[y][x]
   }
 
-  toString() {
-    return this.data.map(line => line.join('')).join('\n')
+  toString(delim = ''): string {
+    return this.data.map(line => line.join(delim)).join('\n')
   }
 }
 
