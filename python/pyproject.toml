@@ -1,0 +1,4 @@
+[tool.poe.tasks]
+format = "black ."
+lint = "pylint **/*.py"
+test = "pytest"
