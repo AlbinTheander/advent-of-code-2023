@@ -13,6 +13,7 @@ def day01():
     --- Day 01: main  ---
     """
     lines = read_input()
+    print("--- Day 01: Trebuchet Repairs ---")
     print("Part 1:", part1(lines))
     print("Part 2:", part2(lines))
 
